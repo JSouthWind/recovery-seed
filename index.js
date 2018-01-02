@@ -4,6 +4,9 @@ const xor = require('buffer-xor');
 const base58 = require('bs58');
 const crypto = require('crypto');
 const md5 = require('js-md5');
+const splitArray = require('split-array');
+const templ = require('./template');
+
 //console.log(args);
 
 function usage() {
@@ -12,15 +15,23 @@ function usage() {
   process.exit();
 }
 
+function split(s) {
+  return splitArray(s.split(' '), 6);
+}
+
 //md5 reduced to 32 bits and converted to base58
-function rmd5(val) {
+function rmd5(val, salt) {
   var sum = md5(val);
   var buf = new Buffer("00000000", 'hex');
   for(var i=0; i<4; i++) {
     var nbuf = xor(buf, new Buffer(sum.slice(i*8, (i+1)*8), 'hex') );
     buf = nbuf;
   }
-  return base58.encode(buf);
+  var saltHex = base58.decode(salt).toString('hex');
+  var salt1 = new Buffer(saltHex.slice(0, 8), 'hex');
+  var salt2 = new Buffer(saltHex.slice(8, 16), 'hex');
+  nbuf = xor(xor(buf, salt1), salt2);
+  return base58.encode(nbuf);
 }
 
 function encrypt(password, salt, mnemonic) {
@@ -55,9 +66,11 @@ if(mode == 'encrypt') {
   var encMnemonic = encrypt(password, salt, mnemonic);
   console.log("Mnemonic: " + encMnemonic);
   console.log("Salt    : " + salt);
-  var realMd5 = rmd5(mnemonic);
-  var testMd5 = rmd5(decrypt("test", salt, encMnemonic));
+  var realMd5 = rmd5(mnemonic, salt);
+  var testMd5 = rmd5(decrypt("test", salt, encMnemonic), salt);
   console.log("Checksum: " + testMd5 + " " + realMd5);
+  templ.render({m: split(encMnemonic, 4), checksum: {test: testMd5, real: realMd5}});
+
 
 
 } else if(mode == 'decrypt') {
@@ -69,7 +82,7 @@ if(mode == 'encrypt') {
   var mnemonic = args[3];
   var dMnemonic = decrypt(password, salt, mnemonic);
   console.log("Mnemonic: " + dMnemonic);
-  console.log("Checksum: " + rmd5(dMnemonic) );
+  console.log("Checksum: " + rmd5(dMnemonic,salt) );
 
 } else {
   usage();
