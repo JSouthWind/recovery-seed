@@ -10,7 +10,7 @@ const templ = require('./template');
 //console.log(args);
 
 function usage() {
-  console.log('Usage: recovery-seed encrypt PASSWORD "MNEMONIC"');
+  console.log('Usage: recovery-seed encrypt PASSWORD "MNEMONIC" [SALT]');
   console.log('Usage: recovery-seed decrypt PASSWORD SALT "MNEMONIC"');
   process.exit();
 }
@@ -62,7 +62,13 @@ if(mode == 'encrypt') {
   }
   var password = args[1];
   var mnemonic = args[2];
-  var salt = base58.encode(crypto.randomBytes(8));
+  var salt;
+  if(args[3]) {
+    salt = args[3];
+  } else {
+    salt = base58.encode(crypto.randomBytes(8));
+  }
+
   var encMnemonic = encrypt(password, salt, mnemonic);
   console.log("Mnemonic: " + encMnemonic);
   console.log("Salt    : " + salt);
