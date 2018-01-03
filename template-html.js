@@ -1,3 +1,4 @@
+module.exports = `
 <table>
   <tr>
     <td>
@@ -38,3 +39,4 @@
    </td>
   <tr>
 </table>
+`;

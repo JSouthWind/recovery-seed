@@ -4,7 +4,7 @@ const fs = require('fs');
 const Handlebars = require('handlebars');
 
 //const source = '<div>{{v.[0]}}</div>';
-var source = fs.readFileSync("./template.html").toString('utf-8');
+var source = require("./template-html");
 const template = Handlebars.compile(source);
 
 const contents = template(v);
