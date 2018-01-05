@@ -1,4 +1,25 @@
-module.exports = `
+module.exports = {
+"outer": `
+<table>
+  <tr>
+    <td>
+      {{this}}
+    </td>
+    <td>
+      {{this}}
+    </td>
+  </tr>
+  <tr>
+    <td>
+      {{this}}
+    </td>
+    <td>
+      {{this}}
+    </td>
+  </tr>
+</table>
+`,
+"inner": `
 <table>
   <tr>
     <td>
@@ -39,4 +60,4 @@ module.exports = `
    </td>
   <tr>
 </table>
-`;
+`};
