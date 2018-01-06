@@ -55,9 +55,9 @@ module.exports = {
   </tr>
   <tr>
    <td colspan="2" style="text-align: center">
-     {{checksum.test}} 
+     {{checksum.test}}
      {{checksum.real}}
    </td>
-  <tr>
+  </tr>
 </table>
 `};
